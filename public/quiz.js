@@ -348,12 +348,7 @@ function proceedToNextQuestion(answerText) {
   studentAnswers[currentQ.id] = answerText;
 
   if (currentQuestionIndex >= total - 1) {
-    submitModalText.innerHTML = `
-      You have reached the end of the quiz (Question ${total} of ${total}).<br><br>
-      Part I Identification and Part II Essay are complete.<br><br>
-      Are you ready to submit your final examination?
-    `;
-    submitModal.classList.add('active');
+    submitQuiz(false);
     return;
   }
 
