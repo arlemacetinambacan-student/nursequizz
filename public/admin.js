@@ -187,6 +187,7 @@ function updateMetricCards() {
 
 function populateSectionFilter() {
   const select = document.getElementById('sectionFilterSelect');
+  if (!select) return;
   const currentVal = select.value;
   const sections = [...new Set(allSubmissions.map(s => s.section).filter(Boolean))].sort();
 
@@ -208,7 +209,8 @@ function populateSectionFilter() {
 // ---------------------------------------------------------
 function filterSubmissions() {
   const search = document.getElementById('studentSearchInput').value.trim().toLowerCase();
-  const sectionFilter = document.getElementById('sectionFilterSelect').value;
+  const sectionSelect = document.getElementById('sectionFilterSelect');
+  const sectionFilter = sectionSelect ? sectionSelect.value : 'ALL';
 
   const filtered = allSubmissions.filter(s => {
     const matchesSearch = s.studentName.toLowerCase().includes(search) || s.section.toLowerCase().includes(search);
