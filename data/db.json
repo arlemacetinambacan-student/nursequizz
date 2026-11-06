@@ -5,7 +5,8 @@
     "partOneTitle": "Part I. Identification (15 points)",
     "partTwoTitle": "Part II. Essay (5 points)",
     "totalPoints": 20,
-    "durationMinutes": 15
+    "itemSeconds": 30,
+    "essaySeconds": 180
   },
   "questions": [
     {

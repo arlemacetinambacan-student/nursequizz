@@ -4,7 +4,10 @@
 
 let quizData = null;
 let timerInterval = null;
-let totalSecondsRemaining = 15 * 60; // 15 minutes
+let itemSeconds = 30;
+let essaySeconds = 180;
+let quizAnchorMs = 0;
+let questionDeadlines = [];
 let quizStarted = false;
 let quizSubmitted = false;
 let studentDetails = { name: '', section: '', date: '' };
@@ -22,6 +25,7 @@ const mainSection = document.getElementById('quizMainSection');
 const completedSection = document.getElementById('quizCompletedSection');
 const timerPill = document.getElementById('quizTimerPill');
 const timerDisplay = document.getElementById('timerDisplay');
+const timerLabel = document.getElementById('timerLabel');
 
 // Question Elements
 const questionStepLabel = document.getElementById('questionStepLabel');
@@ -126,12 +130,17 @@ function initAntiCheatProtection() {
     }
   });
 
-  // 5. Window Blur Detection
+  // 5. Window blur is recorded, but the per-item clock keeps running
   window.addEventListener('blur', () => {
     if (quizStarted && !quizSubmitted) {
-      triggerWarningToast('Quiz focus lost! Please keep your attention on this window.');
+      triggerWarningToast('You left the quiz window. The timer is still counting.');
+      syncQuestionClock();
     }
   });
+
+  // Catch up immediately when the student returns from another tab or app
+  window.addEventListener('focus', syncQuestionClock);
+  document.addEventListener('visibilitychange', syncQuestionClock);
 }
 
 function triggerWarningToast(msg) {
@@ -153,9 +162,8 @@ async function loadQuizInfo() {
     quizData = await res.json();
 
     if (quizData.config) {
-      if (quizData.config.durationMinutes) {
-        totalSecondsRemaining = quizData.config.durationMinutes * 60;
-      }
+      if (quizData.config.itemSeconds) itemSeconds = Number(quizData.config.itemSeconds) || 30;
+      if (quizData.config.essaySeconds) essaySeconds = Number(quizData.config.essaySeconds) || 180;
     }
   } catch (err) {
     console.error('Quiz loading error:', err);
@@ -225,10 +233,13 @@ async function handleStartQuiz(e) {
   startedAtTimestamp = new Date().toISOString();
   currentQuestionIndex = 0;
   studentAnswers = {};
+  questionDeadlines = [];
+  quizAnchorMs = Date.now();
+  questionDeadlines[0] = quizAnchorMs + durationMsFor(quizData.questions[0]);
 
   renderCurrentQuestion();
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  startQuizTimer();
+  startItemTimer();
 }
 
 // ---------------------------------------------------------
@@ -334,10 +345,8 @@ function proceedToNextQuestion(answerText) {
   const total = quizData.questions.length;
   const currentQ = quizData.questions[currentQuestionIndex];
 
-  // Lock in answer
   studentAnswers[currentQ.id] = answerText;
 
-  // If this was the last question (includes Part II Essay)
   if (currentQuestionIndex >= total - 1) {
     submitModalText.innerHTML = `
       You have reached the end of the quiz (Question ${total} of ${total}).<br><br>
@@ -348,9 +357,16 @@ function proceedToNextQuestion(answerText) {
     return;
   }
 
-  // Advance to next question
+  // Moving early starts a fresh timer on the next item.
+  // Later items are rescheduled from that new deadline.
   currentQuestionIndex++;
+  const now = Date.now();
+  questionDeadlines[currentQuestionIndex] = now + durationMsFor(quizData.questions[currentQuestionIndex]);
+  for (let i = currentQuestionIndex + 1; i < total; i++) {
+    questionDeadlines[i] = 0;
+  }
   renderCurrentQuestion();
+  paintTimer(questionDeadlines[currentQuestionIndex] - now);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -364,59 +380,89 @@ function confirmFinalSubmit() {
 }
 
 // ---------------------------------------------------------
-// 15-Minute Timer Countdown
+// Per-item clock (wall time — keeps running in other tabs/apps)
 // ---------------------------------------------------------
-function startQuizTimer() {
-  renderTimerString();
-
-  timerInterval = setInterval(() => {
-    totalSecondsRemaining--;
-
-    if (totalSecondsRemaining <= 0) {
-      clearInterval(timerInterval);
-      totalSecondsRemaining = 0;
-      renderTimerString();
-      handleTimeExpired();
-      return;
-    }
-
-    renderTimerString();
-
-    // Warning states
-    if (totalSecondsRemaining <= 60) {
-      timerPill.classList.add('urgent');
-    } else if (totalSecondsRemaining <= 180) {
-      timerPill.style.borderColor = '#ea580c';
-      timerPill.style.color = '#c2410c';
-    }
-  }, 1000);
+function durationMsFor(question) {
+  if (!question) return itemSeconds * 1000;
+  return (question.type === 'essay' ? essaySeconds : itemSeconds) * 1000;
 }
 
-function renderTimerString() {
-  const mins = Math.floor(totalSecondsRemaining / 60);
-  const secs = totalSecondsRemaining % 60;
-  const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  timerDisplay.textContent = formatted;
+function fillDeadlineChain() {
+  const questions = quizData.questions;
+  if (!questionDeadlines[0]) {
+    questionDeadlines[0] = quizAnchorMs + durationMsFor(questions[0]);
+  }
+  for (let i = 1; i < questions.length; i++) {
+    if (!questionDeadlines[i]) {
+      questionDeadlines[i] = questionDeadlines[i - 1] + durationMsFor(questions[i]);
+    }
+  }
 }
 
-// Auto-submit when time expires
-function handleTimeExpired() {
-  if (quizSubmitted) return;
+function saveCurrentInput() {
+  if (!quizData || !quizData.questions || !currentAnswerInput) return;
+  const currentQ = quizData.questions[currentQuestionIndex];
+  if (!currentQ) return;
+  studentAnswers[currentQ.id] = currentAnswerInput.value.trim();
+}
 
-  // Save whatever is currently typed in the active input
-  if (quizData && quizData.questions && quizData.questions[currentQuestionIndex]) {
-    const currentQ = quizData.questions[currentQuestionIndex];
-    studentAnswers[currentQ.id] = currentAnswerInput.value.trim();
+function paintTimer(remainMs) {
+  const totalSec = Math.max(0, Math.ceil(remainMs / 1000));
+  const mins = Math.floor(totalSec / 60);
+  const secs = totalSec % 60;
+  timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+  const q = quizData && quizData.questions ? quizData.questions[currentQuestionIndex] : null;
+  if (timerLabel) {
+    timerLabel.textContent = q && q.type === 'essay' ? 'Essay time:' : 'Item time:';
   }
 
-  // Show times up modal
-  timesUpModal.classList.add('active');
+  const urgent = totalSec <= 10;
+  timerPill.classList.toggle('urgent', urgent);
+  if (!urgent) {
+    timerPill.style.borderColor = '';
+    timerPill.style.color = '';
+  }
+}
 
-  // Automatically submit after a brief cue
-  setTimeout(() => {
-    timesUpModal.classList.remove('active');
+function startItemTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  syncQuestionClock();
+  // Short interval so the display stays current. Remaining time is always
+  // computed from Date.now(), so a hidden tab cannot pause the clock.
+  timerInterval = setInterval(syncQuestionClock, 250);
+}
+
+function syncQuestionClock() {
+  if (!quizStarted || quizSubmitted || !quizData || !quizData.questions) return;
+
+  saveCurrentInput();
+  fillDeadlineChain();
+
+  const now = Date.now();
+  const questions = quizData.questions;
+  let nextIndex = 0;
+  while (nextIndex < questions.length && now >= questionDeadlines[nextIndex]) {
+    nextIndex++;
+  }
+
+  if (nextIndex >= questions.length) {
+    if (submitModal) submitModal.classList.remove('active');
+    if (timesUpModal) timesUpModal.classList.remove('active');
     submitQuiz(true);
-  }, 1800);
+    return;
+  }
+
+  if (nextIndex !== currentQuestionIndex) {
+    if (submitModal) submitModal.classList.remove('active');
+    currentQuestionIndex = nextIndex;
+    renderCurrentQuestion();
+    const saved = studentAnswers[questions[nextIndex].id];
+    if (saved && currentAnswerInput) currentAnswerInput.value = saved;
+    triggerWarningToast('Time is up. Moved to the next item.');
+  }
+
+  paintTimer(questionDeadlines[currentQuestionIndex] - now);
 }
 
 // ---------------------------------------------------------
@@ -470,10 +516,9 @@ async function submitQuiz(autoSubmitted = false) {
     document.getElementById('summarySection').textContent = studentDetails.section;
     document.getElementById('summaryDate').textContent = studentDetails.date;
     document.getElementById('summaryId').textContent = result.submissionId || 'CONFIRMED';
-    
-    const mins = Math.floor(totalSecondsRemaining / 60);
-    const secs = totalSecondsRemaining % 60;
-    document.getElementById('summaryTimeLeft').textContent = autoSubmitted ? '00:00 (Time Expired)' : `${mins}m ${secs}s`;
+    document.getElementById('summaryTimeLeft').textContent = autoSubmitted
+      ? 'Time ran out on the last item'
+      : 'Submitted before time ran out';
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (err) {

@@ -122,7 +122,8 @@ body {
   }
 
   .floating-timer-pill .timer-label {
-    display: none;
+    display: inline;
+    font-size: 0.65rem;
   }
 }
 

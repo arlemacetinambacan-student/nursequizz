@@ -243,7 +243,7 @@ function renderSubmissionsTable(list) {
     }
 
     if (s.autoSubmitted) {
-      integrityPill += ` <span class="badge badge-info" title="Quiz auto-submitted because 15 mins expired">⏰ Time Expired</span>`;
+      integrityPill += ` <span class="badge badge-info" title="Last item time ran out and the quiz was submitted automatically">⏰ Time Expired</span>`;
     }
 
     // Status badge
