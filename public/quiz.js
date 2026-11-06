@@ -48,15 +48,6 @@ const submitModalText = document.getElementById('submitModalText');
 const timesUpModal = document.getElementById('timesUpModal');
 
 // Initialize
-function quizDateToday() {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Manila',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(new Date());
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize anti-cheating protections
   initAntiCheatProtection();
@@ -186,11 +177,11 @@ async function handleStartQuiz(e) {
 
   const nameVal = document.getElementById('studentNameInput').value.trim();
   const sectionVal = document.getElementById('studentSectionInput').value.trim();
-  const dateVal = quizDateToday();
+  const dateVal = document.getElementById('quizDateInput').value;
   const startBtn = e.target.querySelector('button[type="submit"]');
 
-  if (!nameVal || !sectionVal) {
-    alert('Please enter your Name and Section to start the quiz.');
+  if (!nameVal || !sectionVal || !dateVal) {
+    alert('Please enter your Name, Section, and Date to start the quiz.');
     return;
   }
 
@@ -519,7 +510,7 @@ async function submitQuiz(autoSubmitted = false) {
   const payload = {
     studentName: studentDetails.name,
     section: studentDetails.section,
-    date: quizDateToday(),
+    date: studentDetails.date,
     answers: studentAnswers,
     startedAt: startedAtTimestamp,
     submittedAt: new Date().toISOString(),
@@ -545,7 +536,7 @@ async function submitQuiz(autoSubmitted = false) {
 
     document.getElementById('summaryName').textContent = studentDetails.name;
     document.getElementById('summarySection').textContent = studentDetails.section;
-    document.getElementById('summaryDate').textContent = quizDateToday();
+    document.getElementById('summaryDate').textContent = studentDetails.date;
     document.getElementById('summaryId').textContent = result.submissionId || 'CONFIRMED';
     document.getElementById('summaryTimeLeft').textContent = autoSubmitted
       ? 'Time ran out on the last item'
