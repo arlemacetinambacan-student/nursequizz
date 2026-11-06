@@ -29,8 +29,7 @@ A clean, simple, and secure online quiz platform built for Nursing students, fea
 ### 🛡 2. Admin Portal (`http://localhost:3000/admin`)
 - **Exclusive Single Admin Access:**
   - Only ONE admin account exists. The multi-admin feature has been completely removed.
-  - **Username:** `admin`
-  - **Passcode:** `nursing123`
+  - The admin password is stored only on the server as a one-way hash. It is not included in the student page.
 - **📝 Review & Grade Student Answers:**
   - View all student submissions in real time.
   - Side-by-side view: **Question**, **Student's Answer**, and **Official Accepted Keys**.

@@ -13,6 +13,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Never serve the server data file, even if a student guesses the path.
+app.use((req, res, next) => {
+  const url = decodeURIComponent(req.path || '').toLowerCase();
+  if (url.includes('db.json') || url.startsWith('/data')) {
+    return res.status(404).end();
+  }
+  next();
+});
+
 // In-memory active teacher sessions: { token: { teacherId, username, name, expiresAt } }
 const activeSessions = new Map();
 
@@ -44,6 +53,14 @@ function normalizeAnswer(str) {
     .trim()
     .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
     .replace(/\s+/g, ' ');
+}
+
+function passwordMatches(pin, teacher) {
+  if (!pin || !teacher || !teacher.pinHash || !teacher.pinSalt) return false;
+  const actual = crypto.scryptSync(String(pin), teacher.pinSalt, 32);
+  const expected = Buffer.from(teacher.pinHash, 'hex');
+  if (actual.length !== expected.length) return false;
+  return crypto.timingSafeEqual(actual, expected);
 }
 
 function requireAdminAuth(req, res, next) {
@@ -223,7 +240,7 @@ app.post(['/api/admin/login', '/api/teacher/login'], (req, res) => {
 
   const db = getDB();
   const foundTeacher = (db.teachers || []).find(
-    t => t.username.toLowerCase() === username.trim().toLowerCase() && t.pin === pin.trim()
+    t => t.username.toLowerCase() === username.trim().toLowerCase() && passwordMatches(pin.trim(), t)
   );
 
   if (!foundTeacher) {

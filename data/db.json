@@ -233,8 +233,9 @@
     {
       "id": "t-1",
       "name": "Course Administrator",
-      "username": "admin",
-      "pin": "nursing123",
+      "username": "kristelshine",
+      "pinSalt": "4cc74c2bf106a8a9d7309dac7dce1cf6",
+      "pinHash": "2cb50aa60b3e78232824fbd6e17a688f18df18db8d40d233aff407b3cdca6b04",
       "role": "Lead Admin",
       "createdAt": "2026-11-06T11:00:00.000Z"
     }
