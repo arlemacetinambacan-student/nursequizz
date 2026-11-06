@@ -1,0 +1,390 @@
+{
+  "config": {
+    "quizTitle": "Nutrition in Emergencies & Disasters",
+    "subject": "College of Nursing",
+    "partOneTitle": "Part I. Identification (15 points)",
+    "partTwoTitle": "Part II. Essay (5 points)",
+    "totalPoints": 20,
+    "durationMinutes": 15
+  },
+  "questions": [
+    {
+      "id": 1,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "The process of organizing food, water, supplies, and necessary services ahead of time to ensure that people are nourished when disasters happen.",
+      "acceptedAnswers": [
+        "Nutrition Preparedness",
+        "Emergency Food Preparedness",
+        "Food Preparedness",
+        "Disaster Preparedness",
+        "Disaster Food Preparedness"
+      ]
+    },
+    {
+      "id": 2,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A process that involves deciding the amount and type of food needed, as well as how supplies should be stored and delivered during a crisis.",
+      "acceptedAnswers": [
+        "Emergency Food Planning",
+        "Food Planning",
+        "Food Logistics",
+        "Food Supply Management",
+        "Ration Planning",
+        "Food Logistics and Supply Management"
+      ]
+    },
+    {
+      "id": 3,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "Proper practices in preparing, handling, and storing meals to avoid contamination and illnesses, especially when clean water and electricity are limited.",
+      "acceptedAnswers": [
+        "Food Safety During Disasters",
+        "Food Safety",
+        "Food Hygiene",
+        "Food Sanitation",
+        "Food Hygiene and Safety"
+      ]
+    },
+    {
+      "id": 4,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "An initial method used by health workers to quickly determine the nutritional condition and immediate needs of people affected by a disaster.",
+      "acceptedAnswers": [
+        "Rapid Nutrition Assessment",
+        "Initial Nutrition Assessment",
+        "Nutritional Screening",
+        "Rapid Assessment"
+      ]
+    },
+    {
+      "id": 5,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A nutritional problem that occurs when the body does not receive enough essential vitamins and minerals, such as iron, iodine, and vitamin A.",
+      "acceptedAnswers": [
+        "Micronutrient Deficiency",
+        "Hidden Hunger",
+        "Micronutrient Malnutrition",
+        "Vitamin and Mineral Deficiency"
+      ]
+    },
+    {
+      "id": 6,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A method of evaluating nutritional status by measuring a person's physical characteristics, such as body weight, height, and growth.",
+      "acceptedAnswers": [
+        "Anthropometric",
+        "Anthropometric Assessment",
+        "Anthropometry",
+        "Anthropometric Measurement",
+        "Anthropometric Method"
+      ]
+    },
+    {
+      "id": 7,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "An assessment method that involves examining blood or other body samples through laboratory examinations to detect nutritional deficiencies.",
+      "acceptedAnswers": [
+        "Biochemical",
+        "Biochemical Assessment",
+        "Biochemical Method",
+        "Laboratory Assessment",
+        "Biochemical Examination"
+      ]
+    },
+    {
+      "id": 8,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "An assessment technique that involves observing the body for physical signs and symptoms that may indicate nutritional problems.",
+      "acceptedAnswers": [
+        "Clinical",
+        "Clinical Assessment",
+        "Clinical Method",
+        "Clinical Examination",
+        "Physical Assessment"
+      ]
+    },
+    {
+      "id": 9,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "The different methods used to quickly determine whether disaster-affected individuals are experiencing malnutrition or need immediate nutritional assistance.",
+      "acceptedAnswers": [
+        "Basic Assessment Approach",
+        "Nutritional Assessment",
+        "Nutrition Screening",
+        "Rapid Nutrition Assessment",
+        "Nutrition Assessment Methods"
+      ]
+    },
+    {
+      "id": 10,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "The organized provision of safe, nutritious, and appropriate meals to people who have been affected by natural or human-made disasters.",
+      "acceptedAnswers": [
+        "Feeding During Emergencies",
+        "Emergency Feeding",
+        "Food Relief",
+        "Disaster Feeding Program",
+        "Food Assistance",
+        "Emergency Food Distribution"
+      ]
+    },
+    {
+      "id": 11,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A feeding intervention that provides fortified foods or nutrient-rich supplements to people with moderate malnutrition to prevent their condition from becoming worse.",
+      "acceptedAnswers": [
+        "Supplementary Feeding Programs",
+        "Supplementary Feeding Program",
+        "Supplementary Feeding",
+        "Targeted Supplementary Feeding",
+        "SFP"
+      ]
+    },
+    {
+      "id": 12,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A relief activity that distributes food supplies, such as rice, canned goods, beans, and cooking oil, to affected households.",
+      "acceptedAnswers": [
+        "General Food Distribution",
+        "Food Distribution",
+        "Relief Goods Distribution",
+        "GFD"
+      ]
+    },
+    {
+      "id": 13,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A specialized nutrition intervention that provides therapeutic foods or specially formulated milk to individuals suffering from severe acute malnutrition.",
+      "acceptedAnswers": [
+        "Therapeutic Feeding Programs",
+        "Therapeutic Feeding Program",
+        "Therapeutic Feeding",
+        "TFP",
+        "Inpatient Therapeutic Care"
+      ]
+    },
+    {
+      "id": 14,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "Groups of individuals who are more likely to experience malnutrition, dehydration, and illness during disasters, including infants, pregnant women, and older adults.",
+      "acceptedAnswers": [
+        "Vulnerable Population",
+        "Vulnerable Populations",
+        "Vulnerable Groups",
+        "At-risk Groups",
+        "High-risk Groups"
+      ]
+    },
+    {
+      "id": 15,
+      "part": 1,
+      "type": "identification",
+      "points": 1,
+      "text": "A planned course of action designed to address the immediate nutritional needs of communities affected by disasters, food shortages, or displacement.",
+      "acceptedAnswers": [
+        "Rapid Nutritional Response Plan",
+        "Rapid Nutrition Response Plan",
+        "Nutrition Response Plan",
+        "Emergency Nutrition Plan",
+        "Nutrition Action Plan",
+        "Nutrition Intervention Plan"
+      ]
+    },
+    {
+      "id": 16,
+      "part": 2,
+      "type": "essay",
+      "points": 5,
+      "title": "Part II. Essay (5 points)",
+      "direction": "Direction: Answer the following question in your own words. Explain your answer clearly and provide a relevant example if possible.",
+      "text": "Why is nutrition preparedness important, especially during emergencies and disasters? Explain how being prepared can protect your health, improve your quality of life, and help you make better decisions for yourself and others during difficult situations."
+    }
+  ],
+  "teachers": [
+    {
+      "id": "t-1",
+      "name": "Course Administrator",
+      "username": "admin",
+      "pin": "nursing123",
+      "role": "Lead Admin",
+      "createdAt": "2026-11-06T11:00:00.000Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "SUB-MW4H7YD4-424",
+      "studentName": "asdasd",
+      "section": "asdasdasd",
+      "date": "2026-11-06",
+      "startedAt": "2026-11-06T04:29:54.627Z",
+      "submittedAt": "2026-11-06T04:30:34.162Z",
+      "tabSwitches": 0,
+      "autoSubmitted": false,
+      "answers": {
+        "1": "nutrition preparedness",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": "",
+        "7": "",
+        "8": "",
+        "9": "",
+        "10": "",
+        "11": "",
+        "12": "",
+        "13": "",
+        "14": "",
+        "15": "",
+        "16": ""
+      },
+      "grades": {
+        "1": 1,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0
+      },
+      "totalScore": 1,
+      "graded": false,
+      "teacherNotes": ""
+    },
+    {
+      "id": "SUB-MW4H5UL8-860",
+      "studentName": "asddasd",
+      "section": "asdasdsa",
+      "date": "2026-11-06",
+      "startedAt": "2026-11-06T04:28:37.036Z",
+      "submittedAt": "2026-11-06T04:28:55.938Z",
+      "tabSwitches": 0,
+      "autoSubmitted": false,
+      "answers": {
+        "1": "asdasd",
+        "2": "asdasd",
+        "3": "asda",
+        "4": "asd",
+        "5": "sa",
+        "6": "",
+        "7": "asdasd",
+        "8": "asdasdasd",
+        "9": "asdasdasd",
+        "10": "asdasd",
+        "11": "asdd",
+        "12": "ddas",
+        "13": "asdd",
+        "14": "asd",
+        "15": "sdd",
+        "16": ""
+      },
+      "grades": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0
+      },
+      "totalScore": 0,
+      "graded": false,
+      "teacherNotes": ""
+    },
+    {
+      "id": "SUB-MW4GUZMT-408",
+      "studentName": "asdasd",
+      "section": "asddasdas",
+      "date": "2026-11-06",
+      "startedAt": "2026-11-06T04:20:00.716Z",
+      "submittedAt": "2026-11-06T04:20:29.283Z",
+      "tabSwitches": 0,
+      "autoSubmitted": false,
+      "answers": {
+        "1": "addda",
+        "2": "",
+        "3": "",
+        "4": "",
+        "5": "",
+        "6": "",
+        "7": "",
+        "8": "",
+        "9": "",
+        "10": "",
+        "11": "",
+        "12": "",
+        "13": "",
+        "14": "",
+        "15": "",
+        "16": ""
+      },
+      "grades": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 0,
+        "12": 0,
+        "13": 0,
+        "14": 0,
+        "15": 0,
+        "16": 0
+      },
+      "totalScore": 0,
+      "graded": false,
+      "teacherNotes": ""
+    }
+  ]
+}

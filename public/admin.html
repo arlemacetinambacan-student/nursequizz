@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal — Quiz Management</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Main Container -->
+  <main class="main-wrapper" style="max-width: 1100px; margin-top: 2rem;">
+
+    <!-- ==================== LOGIN SCREEN ==================== -->
+    <section id="adminLoginSection" class="nurse-card" style="max-width: 440px; margin: 3rem auto;">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.4rem; color: #0f172a;">Admin Authentication</h2>
+        <p style="font-size: 0.9rem; color: #475569; margin-top: 0.25rem;">
+          Authorized access only. Enter your admin credentials.
+        </p>
+      </div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" for="loginUsername">Admin Username</label>
+          <input 
+            type="text" 
+            id="loginUsername" 
+            class="form-input" 
+            placeholder="e.g. admin" 
+            required
+            autocomplete="username"
+          >
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="loginPin">Access Passcode / PIN</label>
+          <input 
+            type="password" 
+            id="loginPin" 
+            class="form-input" 
+            placeholder="Enter passcode" 
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-block">
+          Sign In to Admin Dashboard →
+        </button>
+      </form>
+    </section>
+
+    <!-- ==================== ADMIN DASHBOARD ==================== -->
+    <section id="adminDashboardSection" style="display: none;">
+      
+      <!-- Dashboard Top Action Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2 style="font-size: 1.35rem; color: #0f172a; font-weight: 700;">Admin Dashboard</h2>
+          <span class="badge" style="background:#fef3c7; color:#92400e; margin-top: 0.25rem;">
+            👤 <span id="activeAdminName">Admin</span>
+          </span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <a href="/" target="_blank" class="btn btn-secondary btn-sm" title="Open student quiz in a new tab">
+            View Student Quiz ↗
+          </a>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="handleAdminLogout()">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="statTotalSubmissions">0</div>
+          <div class="stat-label">Total Submissions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statAverageScore">0.0 / 20</div>
+          <div class="stat-label">Average Class Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statPendingReview">0</div>
+          <div class="stat-label">Pending Final Review</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tab-bar">
+        <button type="button" class="tab-btn active" id="tabBtnSubmissions" onclick="switchTab('submissions')">
+          📋 Student Submissions & Grading
+        </button>
+        <button type="button" class="tab-btn" id="tabBtnKey" onclick="switchTab('key')">
+          🔑 Answer Key & Variations
+        </button>
+      </div>
+
+      <!-- TAB 1: Submissions & Grading -->
+      <div id="tabContentSubmissions">
+        
+        <!-- Filter & Search Controls -->
+        <div class="filter-bar">
+          <div class="search-box">
+            <input 
+              type="text" 
+              id="studentSearchInput" 
+              class="form-input" 
+              placeholder="🔍 Search student name or section..." 
+              oninput="filterSubmissions()"
+            >
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <select id="sectionFilterSelect" class="form-select" style="width: auto; min-width: 140px;" onchange="filterSubmissions()">
+              <option value="ALL">All Sections</option>
+            </select>
+
+            <button type="button" class="btn btn-secondary btn-sm" onclick="exportCSV()">
+              📥 Export CSV (Excel)
+            </button>
+
+            <button type="button" class="btn btn-secondary btn-sm" onclick="loadDashboardData()">
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="table-responsive">
+          <table class="nurse-table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Section</th>
+                <th>Quiz Date</th>
+                <th>Integrity / Tabs</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="submissionsTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: #64748b; padding: 2rem;">
+                  Loading student submissions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 2: Answer Key & Variations -->
+      <div id="tabContentKey" style="display: none;">
+        <div class="nurse-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; color: #0f172a;">Official Answer Key Reference</h3>
+              <p style="font-size: 0.85rem; color: #475569;">
+                Accepted answers used by the system for preliminary auto-grading. You can add acceptable student synonyms.
+              </p>
+            </div>
+          </div>
+
+          <div id="answerKeysContainer">
+            <!-- Dynamically populated answer keys -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== GRADING & REVIEW MODAL ==================== -->
+  <div id="gradingModal" class="modal-overlay">
+    <div class="modal-dialog grading-modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.75rem;">
+        <div>
+          <h3 class="modal-title" style="margin-bottom: 0.25rem;">
+            <span>📝</span> Grading Quiz: <span id="gradingStudentName"></span>
+          </h3>
+          <p style="font-size: 0.85rem; color: #64748b;">
+            Section: <strong id="gradingStudentSection"></strong> &bull; 
+            Date: <span id="gradingStudentDate"></span> &bull; 
+            Integrity: <span id="gradingTabSwitches"></span>
+          </p>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeGradingModal()">
+          ✕ Close
+        </button>
+      </div>
+
+      <!-- Quick Actions Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background-color: #fffbeb; padding: 0.75rem 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; border: 1px solid #fde68a; flex-wrap: wrap; gap: 0.5rem;">
+        <div>
+          <span style="font-size: 0.9rem; color: #92400e; font-weight: 600;">Current Total Score:</span>
+          <span id="gradingScoreDisplay" style="font-size: 1.25rem; font-weight: 800; color: #b45309; margin-left: 0.35rem;">
+            0 / 20
+          </span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="autoSuggestAllScores()">
+            ⚡ Re-run Auto-Suggest Match
+          </button>
+        </div>
+      </div>
+
+      <!-- Part I (15 items) + Part II Essay grading breakdown -->
+      <div id="gradingItemsList">
+        <!-- Dynamic item reviews -->
+      </div>
+
+      <!-- Instructor Feedback / Notes -->
+      <div style="margin-top: 1.25rem;">
+        <label class="form-label" for="gradingTeacherNotes">Instructor Remarks / Feedback (Optional):</label>
+        <textarea 
+          id="gradingTeacherNotes" 
+          class="form-input" 
+          rows="2" 
+          placeholder="e.g. Great understanding of emergency nutrition interventions. Review clinical assessment methods."
+        ></textarea>
+      </div>
+
+      <div class="modal-actions" style="margin-top: 1.5rem;">
+        <button type="button" class="btn btn-secondary" onclick="closeGradingModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveGradingResult()">
+          💾 Save & Finalize Grade
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastWarning" class="toast-notice" role="alert">
+    <span>💡</span>
+    <span id="toastMessage">Success</span>
+  </div>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
+
