@@ -8,6 +8,8 @@ let itemSeconds = 30;
 let essaySeconds = 180;
 let quizAnchorMs = 0;
 let questionDeadlines = [];
+let lastTickSecond = null;
+let timerAudioCtx = null;
 let quizStarted = false;
 let quizSubmitted = false;
 let studentDetails = { name: '', section: '', date: '' };
@@ -176,6 +178,7 @@ async function loadQuizInfo() {
 // ---------------------------------------------------------
 async function handleStartQuiz(e) {
   e.preventDefault();
+  unlockTimerAudio();
 
   const nameVal = document.getElementById('studentNameInput').value.trim();
   const sectionVal = document.getElementById('studentSectionInput').value.trim();
@@ -227,7 +230,8 @@ async function handleStartQuiz(e) {
 
   gateSection.style.display = 'none';
   mainSection.style.display = 'block';
-  timerPill.style.display = 'inline-flex';
+  document.body.classList.add('quiz-running');
+  timerPill.style.display = 'flex';
 
   quizStarted = true;
   startedAtTimestamp = new Date().toISOString();
@@ -385,6 +389,35 @@ function saveCurrentInput() {
   studentAnswers[currentQ.id] = currentAnswerInput.value.trim();
 }
 
+function unlockTimerAudio() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return;
+  if (!timerAudioCtx) timerAudioCtx = new AudioCtx();
+  if (timerAudioCtx.state === 'suspended') timerAudioCtx.resume();
+  const buffer = timerAudioCtx.createBuffer(1, 1, 22050);
+  const source = timerAudioCtx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(timerAudioCtx.destination);
+  source.start(0);
+}
+
+function playTick() {
+  if (!timerAudioCtx) return;
+  const ctx = timerAudioCtx;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(880, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.2, now + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.1);
+}
+
 function paintTimer(remainMs) {
   const totalSec = Math.max(0, Math.ceil(remainMs / 1000));
   const mins = Math.floor(totalSec / 60);
@@ -397,10 +430,19 @@ function paintTimer(remainMs) {
   }
 
   const urgent = totalSec <= 10;
-  timerPill.classList.toggle('urgent', urgent);
+  const finalSeconds = totalSec <= 5;
+  timerPill.classList.toggle('urgent', urgent && !finalSeconds);
+  timerPill.classList.toggle('final-seconds', finalSeconds);
   if (!urgent) {
     timerPill.style.borderColor = '';
     timerPill.style.color = '';
+  }
+
+  if (finalSeconds && totalSec !== lastTickSecond) {
+    lastTickSecond = totalSec;
+    playTick();
+  } else if (!finalSeconds) {
+    lastTickSecond = null;
   }
 }
 
@@ -440,7 +482,9 @@ function syncQuestionClock() {
   }
 
   if (nextIndex !== currentQuestionIndex) {
+    playTick();
     currentQuestionIndex = nextIndex;
+    lastTickSecond = null;
     renderCurrentQuestion();
   }
 
@@ -491,6 +535,7 @@ async function submitQuiz(autoSubmitted = false) {
 
     // Display Completion Screen
     mainSection.style.display = 'none';
+    document.body.classList.remove('quiz-running');
     timerPill.style.display = 'none';
     completedSection.style.display = 'block';
 
