@@ -46,6 +46,15 @@ function saveDB(data) {
   }
 }
 
+function quizDateInManila(date = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(date);
+}
+
 function normalizeAnswer(str) {
   if (!str) return '';
   return str
@@ -196,7 +205,7 @@ app.post('/api/quiz/submit', async (req, res) => {
       id: submissionId,
       studentName: studentName.trim(),
       section: section.trim(),
-      date: date || now.toISOString().split('T')[0],
+      date: quizDateInManila(now),
       startedAt: startedAt || now.toISOString(),
       submittedAt: submittedAt || now.toISOString(),
       tabSwitches: Number(tabSwitches) || 0,
