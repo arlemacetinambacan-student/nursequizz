@@ -353,13 +353,9 @@ function proceedToNextQuestion(answerText) {
   }
 
   // Moving early starts a fresh timer on the next item.
-  // Later items are rescheduled from that new deadline.
   currentQuestionIndex++;
   const now = Date.now();
   questionDeadlines[currentQuestionIndex] = now + durationMsFor(quizData.questions[currentQuestionIndex]);
-  for (let i = currentQuestionIndex + 1; i < total; i++) {
-    questionDeadlines[i] = 0;
-  }
   renderCurrentQuestion();
   paintTimer(questionDeadlines[currentQuestionIndex] - now);
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -380,18 +376,6 @@ function confirmFinalSubmit() {
 function durationMsFor(question) {
   if (!question) return itemSeconds * 1000;
   return (question.type === 'essay' ? essaySeconds : itemSeconds) * 1000;
-}
-
-function fillDeadlineChain() {
-  const questions = quizData.questions;
-  if (!questionDeadlines[0]) {
-    questionDeadlines[0] = quizAnchorMs + durationMsFor(questions[0]);
-  }
-  for (let i = 1; i < questions.length; i++) {
-    if (!questionDeadlines[i]) {
-      questionDeadlines[i] = questionDeadlines[i - 1] + durationMsFor(questions[i]);
-    }
-  }
 }
 
 function saveCurrentInput() {
@@ -432,29 +416,32 @@ function syncQuestionClock() {
   if (!quizStarted || quizSubmitted || !quizData || !quizData.questions) return;
 
   saveCurrentInput();
-  fillDeadlineChain();
 
   const now = Date.now();
   const questions = quizData.questions;
-  let nextIndex = 0;
-  while (nextIndex < questions.length && now >= questionDeadlines[nextIndex]) {
+  let nextIndex = currentQuestionIndex;
+
+  if (!questionDeadlines[nextIndex]) {
+    questionDeadlines[nextIndex] = now + durationMsFor(questions[nextIndex]);
+  }
+
+  // Only move forward. A finished item must never pull the student back.
+  while (nextIndex < questions.length && questionDeadlines[nextIndex] && now >= questionDeadlines[nextIndex]) {
+    const expiredAt = questionDeadlines[nextIndex];
     nextIndex++;
+    if (nextIndex < questions.length && !questionDeadlines[nextIndex]) {
+      questionDeadlines[nextIndex] = expiredAt + durationMsFor(questions[nextIndex]);
+    }
   }
 
   if (nextIndex >= questions.length) {
-    if (submitModal) submitModal.classList.remove('active');
-    if (timesUpModal) timesUpModal.classList.remove('active');
     submitQuiz(true);
     return;
   }
 
   if (nextIndex !== currentQuestionIndex) {
-    if (submitModal) submitModal.classList.remove('active');
     currentQuestionIndex = nextIndex;
     renderCurrentQuestion();
-    const saved = studentAnswers[questions[nextIndex].id];
-    if (saved && currentAnswerInput) currentAnswerInput.value = saved;
-    triggerWarningToast('Time is up. Moved to the next item.');
   }
 
   paintTimer(questionDeadlines[currentQuestionIndex] - now);
